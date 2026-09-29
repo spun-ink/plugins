@@ -1,0 +1,15 @@
+{
+  "name": "spun-ink",
+  "description": "Plugins for operating spun.ink websites from your AI agent.",
+  "owner": {
+    "name": "City of Code",
+    "url": "https://spun.ink"
+  },
+  "plugins": [
+    {
+      "name": "spun",
+      "source": "./",
+      "description": "Build and run a spun.ink website from Claude."
+    }
+  ]
+}
