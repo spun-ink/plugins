@@ -21,7 +21,7 @@ Skills in claude.ai chat need "Code execution and file creation" switched on, wh
 
 ## What happens on first use
 
-The plugin adds an MCP server named `spun` (shown as spun.ink). It carries no token: the first time you connect, a spun.ink window opens in your browser, where you sign in or sign up. In Claude Code, `/mcp` shows the `spun` server and lets you start or repeat that sign-in or sign-up.
+The plugin adds an MCP server named `spun` (shown as spun.ink). It carries no token: the first time you connect, a spun.ink window opens in your browser, where you sign in, or create an account with a code mailed to you. In Claude Code, `/mcp` shows the `spun` server and lets you start or repeat that sign-in.
 
 To remove the plugin in Claude Code: `/plugin uninstall spun@spun-ink`.
 

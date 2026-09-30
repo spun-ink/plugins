@@ -147,18 +147,39 @@ A command that names no server goes to **https://spun.ink, production**, with th
 Run `spun profiles` first. Only `spun.ink`: work there. Other profiles too (a dev server): ask the
 owner which one this task is for, and pass it by name.
 
-### Not logged in yet — the owner logs in or signs up
+### Not logged in yet — the owner logs in, not you
 
 Exit 5 with "not logged in" means no token is stored. The token is the owner's key to their
 account. **Never ask for it in chat, never write it to a file, never pass it as an argument.** Ask
 the owner to run `spun login` in their own terminal — it prompts without echo, so you never see it.
 
-If the owner already has an account, **do not send them to sign up again** — a second sign-up is a
-second, separate account; a lost token is replaced at https://spun.ink/recover.
+If the owner already has an account, **do not sign up again** — a second sign-up is a second,
+separate account; a lost token is replaced at https://spun.ink/recover.
 
-No account yet: the owner signs up in the browser, never you. `spun signup` prints and opens
-https://spun.ink/signup; the owner confirms the emailed code there, then runs `spun login` in their
-own terminal to store the token.
+No account yet (on the owner's own machine — never in a sandbox): the owner is best served running `spun signup` in their own terminal — it asks for
+email, name and site handle, shows the terms, mails a code and asks for it. From your shell instead,
+run it once without `--accept-terms`: it refuses (exit 2) with the terms sentence and its URLs.
+**Show your human that sentence verbatim and wait for their yes** — the contract is theirs, not
+yours; the code they read from their mail is the acceptance — then:
+
+```bash
+spun signup --email <theirs> [--name <name>] [--handle <handle>] --accept-terms
+```
+
+This mails the owner a code and exits **6** (not a failure), printing
+`{"status":"code_sent","email":…}`. **Ask the owner for the code**, then finish — the pending
+sign-up is remembered per profile and server:
+
+```bash
+spun signup --code <code> [--name <name>] [--handle <handle>]
+```
+
+The token is stored as profile `spun.ink`, never shown. The account is verified once the code is
+accepted; there is no confirmation email to click. `invalid_code` (exit 1): wrong or expired code —
+ask the owner again, or start over with `spun signup`. `validation_failed` (a taken handle): repeat
+`--code` with another `--name`/`--handle`, no new code. `rate_limited` (exit 4): wait, then repeat
+the same command. Exit 4 `signup_unavailable` means this server has no terminal sign-up: the owner
+signs up at https://spun.ink/signup, then runs `spun login` in their own terminal.
 
 ### Learn a tool before you call it
 
@@ -227,6 +248,7 @@ tools' vocabulary.
 | 3 | unauthorized: no token, or the server rejected it |
 | 4 | network or protocol failure — a redirect names the server to use instead |
 | 5 | no server named, or local configuration missing |
+| 6 | sign-up code sent — ask the owner for it |
 
 ## Both available — precedence
 
