@@ -43,6 +43,10 @@ The plugin adds an MCP server named `spun` (shown as spun.ink). It carries no to
 
 To remove the plugin: `/plugin uninstall spun@spun-ink` in Claude Code, `codex plugin remove spun@spun-ink` in Codex.
 
+## What the plugin runs and fetches
+
+The plugin ships no code: a skill and the `spun` server entry, nothing else. Your data goes only to spun.ink, through that server. Before its first change to a site, the skill has your agent read the public quality guide at https://github.com/cityofcode-io/agent-operated-websites and check the pages with the agent's own browser tools. Where the `spun` CLI is already installed, the agent may use it; it talks to spun.ink as well. The skill never installs it.
+
 ## Links
 
 - Docs: https://spun.ink/docs
