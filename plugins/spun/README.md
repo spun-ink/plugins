@@ -45,7 +45,8 @@ To remove the plugin: `/plugin uninstall spun@spun-ink` in Claude Code, `codex p
 
 ## Links
 
-- Docs and support: https://spun.ink/docs
+- Docs: https://spun.ink/docs
+- Support: https://spun.ink/contact
 - Privacy: https://spun.ink/legal/privacy
 - Terms: https://spun.ink/legal/terms
 
