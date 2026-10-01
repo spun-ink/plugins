@@ -1,17 +1,18 @@
 #!/usr/bin/env bash
-# The Claude manifests (.claude-plugin/plugin.json, .mcp.json) and the portable ones the OpenAI
-# directory reads (plugin.json, mcp.json) describe one package and must not drift apart.
+# The Claude plugin (plugins/spun) and the OpenAI package (openai/) describe one product and must not
+# drift apart.
 set -euo pipefail
 cd "$(dirname "$0")/.."
+claude=plugins/spun
 
 fail=0
 same() {
   if [ "$2" != "$3" ]; then echo "mismatch: $1 — '$2' vs '$3'"; fail=1; fi
 }
 
-same name    "$(jq -r .name .claude-plugin/plugin.json)"    "$(jq -r .name plugin.json)"
-same version "$(jq -r .version .claude-plugin/plugin.json)" "$(jq -r .version plugin.json)"
-same url     "$(jq -r .mcpServers.spun.url .mcp.json)"      "$(jq -r .mcpServers.spun.url mcp.json)"
+same name    "$(jq -r .name $claude/.claude-plugin/plugin.json)"    "$(jq -r .name openai/plugin.json)"
+same version "$(jq -r .version $claude/.claude-plugin/plugin.json)" "$(jq -r .version openai/plugin.json)"
+same url     "$(jq -r .mcpServers.spun.url $claude/.mcp.json)"      "$(jq -r .mcpServers.spun.url openai/mcp.json)"
 
 # The directory's submission limits (developers.openai.com/plugins/deploy/submission.md).
 limits=$(jq -r '
@@ -25,11 +26,11 @@ limits=$(jq -r '
     ($i.capabilities[] | select(length > 120) | "capability over 120 characters: \(.)"),
     (if ($o.review.test_cases.positive | length) != 5 then "positive test cases must be exactly 5" else empty end),
     (if ($o.review.test_cases.negative | length) != 3 then "negative test cases must be exactly 3" else empty end)
-  ] | .[]' plugin.json)
+  ] | .[]' openai/plugin.json)
 if [ -n "$limits" ]; then echo "$limits"; fail=1; fi
 
-for icon in $(jq -r '.extensions["com.openai"].interface | .logo, .composerIcon' plugin.json); do
-  [ -f "$icon" ] || { echo "missing icon: $icon"; fail=1; }
+for icon in $(jq -r '.extensions["com.openai"].interface | .logo, .composerIcon' openai/plugin.json); do
+  [ -f "openai/$icon" ] || { echo "missing icon: $icon"; fail=1; }
 done
 
 [ "$fail" -eq 0 ] && echo "manifests agree"
