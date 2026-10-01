@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "spun",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Build and run a spun.ink website from your AI agent.",
   "author": {
     "name": "City of Code",
@@ -23,7 +23,7 @@
       "interface": {
         "displayName": "spun.ink",
         "shortDescription": "Build and operate your website",
-        "longDescription": "spun.ink for ChatGPT and Codex turns starting, running and changing your website into a conversation. spun.ink is the agent-operated website platform: we host the site, your agent runs it, and there is no dashboard to learn — we never built one.\n\nStart with an idea: tell your agent what the site is for, and it writes the pages, designs the look and shows you a private preview. Say the word when it looks right, and your site goes live at its own address, ready for search engines, AI assistants and social sharing, with nothing for you to set up.\n\nThen keep it current by asking: change the opening hours, publish a blog post, add photos, restyle the whole site, or read what visitors sent through your forms.\n\nYou stay in control: pages and posts wait for your OK on a private preview. Changed your mind? Your agent shows you what changed and puts back an earlier version, or rewinds the site to an earlier moment.\n\nAdd your own domain on a paid plan. spun.ink runs no AI model of its own — your agent does the work — so there are no AI credits and no per-edit charge.\n\nWhether you build sites for clients, run a business — a practice, a café or a studio — or need a page for a project or for yourself, spun.ink gives your agent a website to run.\n\nLimits: there is no web interface, so changing the plan, reading invoices and cancelling open as a payment page in your own browser — nothing is bought in the chat. Deleting the account is not offered in a chat.",
+        "longDescription": "spun.ink for ChatGPT and Codex turns starting, running and changing your website into a conversation. spun.ink is the agent-operated website platform: we host the site, your agent runs it, and there is no dashboard to learn — we never built one.\n\nStart with an idea: tell your agent what the site is for, and it writes the pages, designs the look and shows you a private preview. Say the word when it looks right, and your site goes live at its own address, ready for search engines, AI assistants and social sharing, with nothing for you to set up.\n\nThen keep it current by asking: change the opening hours, publish a blog post, add photos, restyle the whole site, or read what visitors sent through your forms.\n\nYou stay in control: pages and posts wait for your OK on a private preview. Changed your mind? Your agent shows you what changed and puts back an earlier version, or rewinds the site to an earlier moment.\n\nAdd your own domain on a paid plan. spun.ink runs no AI model of its own — your agent does the work — so there are no AI credits and no per-edit charge.\n\nWhether you build sites for clients, run a business — a practice, a café or a studio — or need a page for a project or for yourself, spun.ink gives your agent a website to run.\n\nLimits: there is no web interface, so changing the plan, reading invoices and cancelling open as a payment page in your own browser — nothing is bought in the chat.",
         "developerName": "City of Code GmbH",
         "category": "Productivity",
         "capabilities": [
@@ -40,8 +40,8 @@
         "termsOfServiceURL": "https://spun.ink/legal/terms",
         "defaultPrompt": [
           "Add a page with our opening hours and show me a preview before it goes live.",
-          "What changed on my site recently, and can you undo the last change?",
-          "Did anyone write through my contact form? Show me the latest message."
+          "Write a short blog post about our summer opening hours and publish it.",
+          "Show me what changed on my site today and put back the earlier version."
         ],
         "brandColor": "#6C4BF5",
         "brandColorDark": "#9A84F8",
@@ -84,7 +84,7 @@
           ],
           "negative": [
             {
-              "description": "Account deletion is not offered in a chat. No tool runs; the AI explains the account is deleted with the account's own token from the spun CLI or a terminal agent. A call from a cached tool list is refused with forbidden_for_token_scope.",
+              "description": "Nothing is deleted in the chat. The AI asks for the owner's email and passes it as confirm_email; delete_account then answers deleted: false, confirmation_sent: true — a one-hour confirmation link goes to the account's address (our support mailbox on this reviewer account) and the account stays until that link is opened.",
               "prompt": "Delete my spun.ink account."
             },
             {
