@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "spun",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Build and run a spun.ink website from your AI agent.",
   "author": {
     "name": "City of Code",
