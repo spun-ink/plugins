@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "spun",
-      "source": "./",
+      "source": "./plugins/spun",
       "description": "Build and run a spun.ink website from Claude."
     }
   ]

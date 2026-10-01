@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Builds the ZIP the OpenAI directory takes: openai/ plus the skill, README and licence of the Claude
+# plugin, so the skill has one source.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+scripts/check-manifests
+
+zip="$PWD/dist/spun-openai-$(jq -r .version openai/plugin.json).zip"
+stage=$(mktemp -d)
+trap 'rm -rf "$stage"' EXIT
+
+cp -R openai/. "$stage"
+cp -R plugins/spun/skills plugins/spun/README.md plugins/spun/LICENSE "$stage"
+cp -R plugins/spun/assets/. "$stage/assets"
+
+mkdir -p dist
+rm -f "$zip"
+(cd "$stage" && zip -qrX "$zip" . -x '*.DS_Store')
+echo "$zip"
