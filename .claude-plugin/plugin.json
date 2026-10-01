@@ -1,7 +1,7 @@
 {
   "name": "spun",
   "displayName": "spun.ink",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "Build and run a spun.ink website from Claude.",
   "author": {
     "name": "City of Code",
@@ -10,5 +10,6 @@
   "homepage": "https://spun.ink",
   "repository": "https://github.com/spun-ink/plugins",
   "license": "MIT",
+  "privacyPolicyUrl": "https://spun.ink/legal/privacy",
   "keywords": ["spun", "spun.ink", "website", "mcp", "agent-operated"]
 }
