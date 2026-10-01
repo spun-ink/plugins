@@ -12,7 +12,7 @@ One package serves Claude, ChatGPT and Codex: `.claude-plugin/` and `.mcp.json` 
 
 ### Claude
 
-**claude.ai and Claude Desktop.** [Add to Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=spun.ink&connectorUrl=https%3A%2F%2Fspun.ink%2Fmcp) opens the connector dialog with the name and URL filled in; choose Sign in now (not "No sign-in", which skips sign-in). By hand: open Customize, then Connectors, choose Add custom connector, name it `spun.ink` and enter `https://spun.ink/mcp`. Once spun.ink is listed in Claude's directory, it is one click there.
+**claude.ai and Claude Desktop.** spun.ink is in [Claude's connector directory](https://claude.ai/directory/spun-ink): open it and click Connect. Or use [Add to Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=spun.ink&connectorUrl=https%3A%2F%2Fspun.ink%2Fmcp), which opens the connector dialog with the name and URL filled in; Sign in now is preselected, so click Add, then Connect. By hand: open Customize, then Connectors, choose Add custom connector, name it `spun.ink` and enter `https://spun.ink/mcp`.
 
 Skills in claude.ai chat need "Code execution and file creation" switched on, which is a paid-plan setting. Without it you still get the connector and all of its tools; only the skill is missing.
 
