@@ -1,0 +1,108 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "spun",
+  "version": "0.3.0",
+  "description": "Build and run a spun.ink website from your AI agent.",
+  "author": {
+    "name": "City of Code",
+    "email": "support@spun.ink",
+    "url": "https://spun.ink"
+  },
+  "homepage": "https://spun.ink",
+  "repository": "https://github.com/spun-ink/plugins",
+  "license": "MIT",
+  "keywords": [
+    "spun",
+    "spun.ink",
+    "website",
+    "mcp",
+    "agent-operated"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "spun.ink",
+        "shortDescription": "Build and operate your website",
+        "longDescription": "spun.ink for ChatGPT and Codex turns starting, running and changing your website into a conversation. spun.ink is the agent-operated website platform: we host the site, your agent runs it, and there is no dashboard to learn — we never built one.\n\nStart with an idea: tell your agent what the site is for, and it writes the pages, designs the look and shows you a private preview. Say the word when it looks right, and your site goes live at its own address, ready for search engines, AI assistants and social sharing, with nothing for you to set up.\n\nThen keep it current by asking: change the opening hours, publish a blog post, add photos, restyle the whole site, or read what visitors sent through your forms.\n\nYou stay in control: pages and posts wait for your OK on a private preview. Changed your mind? Your agent shows you what changed and puts back an earlier version, or rewinds the site to an earlier moment.\n\nAdd your own domain on a paid plan. spun.ink runs no AI model of its own — your agent does the work — so there are no AI credits and no per-edit charge.\n\nWhether you build sites for clients, run a business — a practice, a café or a studio — or need a page for a project or for yourself, spun.ink gives your agent a website to run.\n\nLimits: there is no web interface, so changing the plan, reading invoices and cancelling open as a payment page in your own browser — nothing is bought in the chat. Deleting the account is not offered in a chat.",
+        "developerName": "City of Code GmbH",
+        "category": "Productivity",
+        "capabilities": [
+          "Write, design and publish pages and blog posts",
+          "Pages and posts wait for your OK on a private preview",
+          "See what changed, put back an earlier version or rewind the site",
+          "Hosted at its own address, ready for search engines and AI assistants",
+          "Read what visitors sent through your forms",
+          "Add your own domain on a paid plan"
+        ],
+        "websiteURL": "https://spun.ink/",
+        "supportURL": "https://spun.ink/contact",
+        "privacyPolicyURL": "https://spun.ink/legal/privacy",
+        "termsOfServiceURL": "https://spun.ink/legal/terms",
+        "defaultPrompt": [
+          "Add a page with our opening hours and show me a preview before it goes live.",
+          "What changed on my site recently, and can you undo the last change?",
+          "Did anyone write through my contact form? Show me the latest message."
+        ],
+        "brandColor": "#6C4BF5",
+        "brandColorDark": "#9A84F8",
+        "composerIcon": "./assets/icon.png",
+        "logo": "./assets/icon.png"
+      },
+      "review": {
+        "test_cases": {
+          "positive": [
+            {
+              "description": "Orient on the demo site: the agent reads the site's structure before it changes anything.",
+              "prompt": "Show me what's on my site.",
+              "tools_triggered": "site_map",
+              "expected_behavior": "Lists the review-openai site's pages (Home, Features, Contact, Roadmap), its blog with two posts, and each one's publication status; Roadmap is a draft until the Roadmap case publishes it."
+            },
+            {
+              "description": "Draft a new page and preview it; nothing goes public.",
+              "prompt": "Add an 'Opening hours' page with Mon–Fri 8–18 and show me a preview.",
+              "tools_triggered": "create_content, add_block, create_preview_link",
+              "expected_behavior": "A draft page and a private preview URL, valid 24 hours, that shows the opening hours. The public site is unchanged: the page's public address answers 404."
+            },
+            {
+              "description": "Publish a draft page. The client may ask for confirmation first, since the tool is marked destructive.",
+              "prompt": "Publish the Roadmap page.",
+              "tools_triggered": "publish_content",
+              "expected_behavior": "https://review-openai.myspun.ink/roadmap answers publicly, and the Roadmap item appears in the site's navigation."
+            },
+            {
+              "description": "Delete a published page and bring it back from its history. The client may ask for confirmation before each call, since both tools are marked destructive.",
+              "prompt": "Delete the Features page, then bring it back.",
+              "tools_triggered": "delete_content, list_revisions, restore_revision",
+              "expected_behavior": "The page stops answering after the delete; after restore_revision it answers again at /features with its six blocks, and the response names the revision it restored."
+            },
+            {
+              "description": "Read the messages visitors sent through the site's contact form.",
+              "prompt": "Did anyone use the contact form? Show me the latest message.",
+              "tools_triggered": "list_submissions, get_submission",
+              "expected_behavior": "The three synthetic contact-form submissions, newest first, then the latest one in full with its email and message."
+            }
+          ],
+          "negative": [
+            {
+              "description": "Account deletion is not offered in a chat. No tool runs; the AI explains the account is deleted with the account's own token from the spun CLI or a terminal agent. A call from a cached tool list is refused with forbidden_for_token_scope.",
+              "prompt": "Delete my spun.ink account."
+            },
+            {
+              "description": "Purchases never happen in the chat. The AI does not ask for card details; on this in-house account create_upgrade_link answers not_applicable (\"this is an in-house account and is not billed\"), and on a billed account it would return a Stripe link the owner opens in their own browser.",
+              "prompt": "Buy the Pro plan for me now."
+            },
+            {
+              "description": "A connection reaches its own account only. The AI says the site is not in this account; nothing is read or changed.",
+              "prompt": "Edit the homepage of the site at another-customer.myspun.ink."
+            }
+          ]
+        },
+        "commerce": false,
+        "commerce_description": "Nothing is sold, bought or charged in the chat, and no tool sees a card. spun.ink has no web interface, so two account-management tools return Stripe links the owner opens in their own browser: create_upgrade_link (Stripe Checkout) and create_billing_portal_link (Stripe customer portal), the only way to change plan, read invoices, update payment details or cancel. An over-quota refusal names one of them for the same reason. On the reviewer's in-house account both answer not_applicable."
+      },
+      "publication": {
+        "release_notes": "Initial version: the spun.ink MCP server at https://spun.ink/mcp (OAuth 2.1 with Client ID Metadata Documents) and the spun skill, which teaches the authoring loop — orient with site_map, preview with create_preview_link, publish only after the owner's yes."
+      }
+    }
+  }
+}

@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# The Claude manifests (.claude-plugin/plugin.json, .mcp.json) and the portable ones the OpenAI
+# directory reads (plugin.json, mcp.json) describe one package and must not drift apart.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+fail=0
+same() {
+  if [ "$2" != "$3" ]; then echo "mismatch: $1 — '$2' vs '$3'"; fail=1; fi
+}
+
+same name    "$(jq -r .name .claude-plugin/plugin.json)"    "$(jq -r .name plugin.json)"
+same version "$(jq -r .version .claude-plugin/plugin.json)" "$(jq -r .version plugin.json)"
+same url     "$(jq -r .mcpServers.spun.url .mcp.json)"      "$(jq -r .mcpServers.spun.url mcp.json)"
+
+# The directory's submission limits (developers.openai.com/plugins/deploy/submission.md).
+limits=$(jq -r '
+  .extensions["com.openai"] as $o | $o.interface as $i |
+  [ (if ($i.displayName | length) > 30 then "displayName over 30 characters" else empty end),
+    (if ($i.shortDescription | length) > 30 then "shortDescription over 30 characters" else empty end),
+    (if ($i.longDescription | length) > 4000 then "longDescription over 4000 characters" else empty end),
+    (if ($i.defaultPrompt | length) > 3 then "more than 3 defaultPrompt entries" else empty end),
+    ($i.defaultPrompt[] | select(length > 128) | "defaultPrompt over 128 characters: \(.)"),
+    (if ($i.capabilities | length) > 20 then "more than 20 capabilities" else empty end),
+    ($i.capabilities[] | select(length > 120) | "capability over 120 characters: \(.)"),
+    (if ($o.review.test_cases.positive | length) != 5 then "positive test cases must be exactly 5" else empty end),
+    (if ($o.review.test_cases.negative | length) != 3 then "negative test cases must be exactly 3" else empty end)
+  ] | .[]' plugin.json)
+if [ -n "$limits" ]; then echo "$limits"; fail=1; fi
+
+for icon in $(jq -r '.extensions["com.openai"].interface | .logo, .composerIcon' plugin.json); do
+  [ -f "$icon" ] || { echo "missing icon: $icon"; fail=1; }
+done
+
+[ "$fail" -eq 0 ] && echo "manifests agree"
+exit "$fail"
