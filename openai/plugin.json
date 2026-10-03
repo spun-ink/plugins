@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "spun",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "description": "Build and run a spun.ink website from your AI agent.",
   "author": {
     "name": "City of Code",
@@ -52,34 +52,34 @@
         "test_cases": {
           "positive": [
             {
+              "description": "Start a website: the agent drafts a new page and shows it on a private preview; nothing goes public. If asked for the hours, reply 'Mon–Fri 08:00–18:00; closed weekends.'",
+              "prompt": "Add a page with our opening hours and show me a preview before it goes live.",
+              "tools_triggered": "create_content, add_block, create_preview_link",
+              "expected_behavior": "A draft page and a private preview URL, valid 24 hours, that shows the supplied opening hours. The public site is unchanged: the new page's public address answers 404."
+            },
+            {
+              "description": "Keep it current: the agent writes a blog post, shows it on a private preview and publishes it once the reviewer says yes. The client may also ask before the publish call, since the tool is marked destructive. If asked for the hours, reply 'Mon–Fri 08:00–18:00; closed weekends.'",
+              "prompt": "Write a short blog post about our summer opening hours and publish it.",
+              "tools_triggered": "create_content, add_block, create_preview_link, publish_content",
+              "expected_behavior": "The agent shows a preview link whose post names the supplied hours, and asks before publishing. After the reviewer's yes, the post answers publicly on https://review-openai.myspun.ink/blog and appears in the blog's feed."
+            },
+            {
+              "description": "Undo a change: the agent deletes a published page and brings it back from the site's history. The client may ask for confirmation before each call, since both tools are marked destructive. Approve the deletion and the undelete when asked. Undelete immediately serves the page's last published revision. Publishing a different restored draft requires a preview and approval.",
+              "prompt": "Delete the Features page, then bring it back.",
+              "tools_triggered": "delete_content, list_revisions, restore_revision",
+              "expected_behavior": "The page stops answering after the delete; after restore_revision it answers again at https://review-openai.myspun.ink/features with its six blocks, and the response names the revision it restored."
+            },
+            {
               "description": "Orient on the demo site: the agent reads the site's structure before it changes anything.",
               "prompt": "Show me what's on my site.",
               "tools_triggered": "site_map",
-              "expected_behavior": "Lists the review-openai site's pages (Home, Features, Contact, Roadmap), its blog with two posts, and each one's publication status; Roadmap is a draft until the Roadmap case publishes it."
+              "expected_behavior": "The listing includes the pages Home, Features and Contact (published) and Roadmap (draft), and a blog with its posts, each with its publication status."
             },
             {
-              "description": "Draft a new page and preview it; nothing goes public.",
-              "prompt": "Add an 'Opening hours' page with Mon–Fri 8–18 and show me a preview.",
-              "tools_triggered": "create_content, add_block, create_preview_link",
-              "expected_behavior": "A draft page and a private preview URL, valid 24 hours, that shows the opening hours. The public site is unchanged: the page's public address answers 404."
-            },
-            {
-              "description": "Publish a draft page. The client may ask for confirmation first, since the tool is marked destructive.",
-              "prompt": "Publish the Roadmap page.",
-              "tools_triggered": "publish_content",
-              "expected_behavior": "https://review-openai.myspun.ink/roadmap answers publicly, and the Roadmap item appears in the site's navigation."
-            },
-            {
-              "description": "Delete a published page and bring it back from its history. The client may ask for confirmation before each call, since both tools are marked destructive.",
-              "prompt": "Delete the Features page, then bring it back.",
-              "tools_triggered": "delete_content, list_revisions, restore_revision",
-              "expected_behavior": "The page stops answering after the delete; after restore_revision it answers again at /features with its six blocks, and the response names the revision it restored."
-            },
-            {
-              "description": "Read the messages visitors sent through the site's contact form.",
+              "description": "Read what visitors sent through the site's contact form.",
               "prompt": "Did anyone use the contact form? Show me the latest message.",
               "tools_triggered": "list_submissions, get_submission",
-              "expected_behavior": "The three synthetic contact-form submissions, newest first, then the latest one in full with its email and message."
+              "expected_behavior": "The agent confirms the form has received messages and shows the most recent one: the sender's email address and message."
             }
           ],
           "negative": [
@@ -88,7 +88,7 @@
               "prompt": "Delete my spun.ink account."
             },
             {
-              "description": "Purchases never happen in the chat. The AI does not ask for card details; on this in-house account create_upgrade_link answers not_applicable (\"this is an in-house account and is not billed\"), and on a billed account it would return a Stripe link the owner opens in their own browser.",
+              "description": "On this in-house reviewer account, create_upgrade_link returns not_applicable (\"this is an in-house account and is not billed\"). The agent explains that result, asks for no card details, returns no checkout link and does not claim a purchase succeeded. On a billed account, the tool returns a Stripe Checkout link for the owner to open and complete in their own browser. This reviewer account does not exercise that checkout flow.",
               "prompt": "Buy the Pro plan for me now."
             },
             {
@@ -98,10 +98,11 @@
           ]
         },
         "commerce": false,
-        "commerce_description": "Nothing is sold, bought or charged in the chat, and no tool sees a card. spun.ink has no web interface, so two account-management tools return Stripe links the owner opens in their own browser: create_upgrade_link (Stripe Checkout) and create_billing_portal_link (Stripe customer portal), the only way to change plan, read invoices, update payment details or cancel. An over-quota refusal names one of them for the same reason. On the reviewer's in-house account both answer not_applicable."
+        "commerce_description": "No payment is completed in ChatGPT, and no tool collects card details. On an explicit owner request, the integration can generate a Stripe Checkout or customer-portal link. spun.ink has no web interface: no dashboard, no admin area, no account page. The owner's agent is the only way to manage a spun.ink account, so the account's own billing has to be reachable through it. Two tools do that, and only when the owner asks: create_upgrade_link returns a link to a Stripe Checkout page and create_billing_portal_link a link to the Stripe customer portal, where an existing customer reads invoices, updates payment details, changes plan or cancels. Both open in the owner's own browser. Without the billing-portal tool, customers have no self-service route to cancellation. Both tools are exposed consistently across clients; there is no ChatGPT-specific filtering. No server instruction, tool description or skill tells the agent to suggest a plan. When a request goes beyond the account's plan, such as a custom domain on the free plan or a usage limit reached, the refusal states the limit and names the tool that resolves it; it creates no link and starts no transaction. On the reviewer's in-house account both tools answer not_applicable."
       },
       "publication": {
-        "release_notes": "Initial version: the spun.ink MCP server at https://spun.ink/mcp (OAuth 2.1 with Client ID Metadata Documents) and the spun skill, which teaches the authoring loop — orient with site_map, preview with create_preview_link, publish only after the owner's yes."
+        "countries": [],
+        "release_notes": "0.4.6, initial version: the spun.ink MCP server at https://spun.ink/mcp (OAuth 2.1 with Client ID Metadata Documents) and the spun skill, which teaches the authoring loop — orient with site_map, preview with create_preview_link, publish only after the owner's yes."
       }
     }
   }
